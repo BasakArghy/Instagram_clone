@@ -81,6 +81,7 @@ class _PostScreenState extends State<PostScreen> {
           "uname":uname,
           "imageUrl":imageUrl,
           "caption":captionController.text.trim(),
+          "likes":[],
           "createdAt": FieldValue.serverTimestamp()
         });
 

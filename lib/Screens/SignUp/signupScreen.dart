@@ -36,6 +36,7 @@ class SignUpScreen extends StatelessWidget{
         "uid":userCredential.user!.uid,
         "username":username,
         "email":email,
+        "profilePic":"",
         "createdAt":FieldValue.serverTimestamp(),
       });
 

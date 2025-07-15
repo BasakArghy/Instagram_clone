@@ -77,6 +77,45 @@ class homeScreen extends StatelessWidget{
                       );
                     },
                   ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            post['likes'] != null && post['likes'].contains(user!.uid)
+                                ?Icons.favorite
+                                : Icons.favorite_border,
+                            color:post['likes'] != null && post['likes'].contains(user!.uid)
+                            ?Colors.red
+                            :Colors.grey,
+                          ),
+                            onPressed:()async{
+                            final postRef = FirebaseFirestore.instance
+                                .collection("posts")
+                                .doc(post.id);
+                            final likes = List<String>.from(post["likes"]??[]);
+                            if(likes.contains(user!.uid)){
+                              //unlike
+                              await postRef.update({
+                                "likes":FieldValue.arrayRemove([user!.uid])
+                              });
+                            }
+                            else{
+                              await postRef.update({
+                                "likes": FieldValue.arrayUnion([user!.uid])
+                              });
+                            }
+
+                            },
+
+                        ),
+                        Text('${(post['likes'] ?? []).length}'),
+                        IconButton(onPressed: (){
+
+                        },
+                            icon: Icon(Icons.comment_outlined)
+                        )
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Column(

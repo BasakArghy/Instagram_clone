@@ -7,7 +7,8 @@ class UiHelper {
   static CustomTextField({required TextEditingController controller,
     required String text,
     required bool tohide,
-    required TextInputType textinputtype}) {
+    required TextInputType textinputtype
+ }) {
     return Container(
       height: 50,
       width: 343,
@@ -23,6 +24,7 @@ class UiHelper {
           keyboardType: textinputtype,
           obscureText: tohide,
           decoration: InputDecoration(
+
               hintText: text,
               hintStyle: TextStyle(
                   fontSize: 14,
