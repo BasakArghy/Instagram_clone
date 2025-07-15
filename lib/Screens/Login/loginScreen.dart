@@ -1,6 +1,9 @@
 
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram/Screens/Home/homeScreen.dart';
+import 'package:instagram/Screens/bottomnav/bottomnav.dart';
 import 'package:instagram/Widgets/uihelper.dart';
 
 import '../SignUp/signupScreen.dart';
@@ -9,6 +12,25 @@ import '../SignUp/signupScreen.dart';
 class LoginScreen extends StatelessWidget{
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  void login(String email,String password,BuildContext context) async{
+    if(email.isEmpty ){
+      UiHelper.showAlertDialog(context, "Error", "Please fill Email field.");
+      return;
+    }
+    if(password.isEmpty ){
+      UiHelper.showAlertDialog(context, "Error", "Please fill Email field.");
+      return;
+    }
+
+    try{
+     await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomNavScreen()));
+    } on FirebaseAuthException catch(e){
+      UiHelper.showAlertDialog(context, "Login Failed", e.message??"Unknown error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -33,7 +55,11 @@ class LoginScreen extends StatelessWidget{
              child:  UiHelper.CustomTextButton(callback: (){}, text: "Forgot password?"),)
            ],),
             SizedBox(height: 10,),
-           UiHelper.CustomButton(callback: (){}, buttonName: "Login"),
+           UiHelper.CustomButton(callback: (){
+             String email = emailController.text.trim();
+             String password = passwordController.text.trim();
+             login(email, password, context);
+           }, buttonName: "Login"),
            SizedBox(height: 20,),
            Row(
              mainAxisAlignment: MainAxisAlignment.center,

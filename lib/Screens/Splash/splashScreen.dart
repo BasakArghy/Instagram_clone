@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:instagram/Screens/AuthCheck/authcheckScreen.dart';
 import 'package:instagram/Widgets/uihelper.dart';
 
 import '../Login/loginScreen.dart';
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 3),(){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>authcheck()));
     });
   }
   @override
