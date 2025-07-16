@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram/Screens/Heart/heartScreen.dart';
 import 'package:instagram/Screens/Home/homeScreen.dart';
+import 'package:instagram/Screens/Messenger/SearchUserToChatScreen.dart';
 import 'package:instagram/Screens/Post/postScreen.dart';
 import 'package:instagram/Screens/profile/profileScreen.dart';
 import 'package:instagram/Screens/search/searchScreen.dart';
@@ -19,7 +20,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     homeScreen(),
   SearchScreen(),
     PostScreen(),
-    HeartScreen(),
+    SearchUserToChatScreen(),
     ProfileScreen()
   ];
   @override

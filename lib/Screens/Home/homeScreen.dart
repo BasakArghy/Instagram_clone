@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram/Screens/Home/commentScreen.dart';
 import 'package:instagram/Screens/Login/loginScreen.dart';
+import 'package:instagram/Screens/Messenger/chathomeScreen.dart';
+import 'package:instagram/Widgets/uihelper.dart';
 import 'package:intl/intl.dart';
 
 class homeScreen extends StatelessWidget{
@@ -16,10 +19,17 @@ class homeScreen extends StatelessWidget{
       actions: [
         IconButton(
             onPressed: ()async{
+
+              Navigator.push(context,  MaterialPageRoute(builder: (context)=>ChatHomeScreen()));
+            },
+            icon: Icon(CupertinoIcons.chat_bubble_fill)),
+        IconButton(
+            onPressed: ()async{
               await FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context)=>LoginScreen()));
             },
-            icon: Icon(Icons.logout))
+            icon: Icon(Icons.logout)),
+
       ],
     ),
     body: StreamBuilder(
@@ -110,6 +120,12 @@ class homeScreen extends StatelessWidget{
                         ),
                         Text('${(post['likes'] ?? []).length}'),
                         IconButton(onPressed: (){
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => CommentScreen(postId: post.id),
+                          );
 
                         },
                             icon: Icon(Icons.comment_outlined)

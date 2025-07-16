@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram/Screens/EditProfile/editprofileScreen.dart';
+import 'package:instagram/Screens/Home/commentScreen.dart';
 import 'package:instagram/Widgets/uihelper.dart';
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatelessWidget{
+  final User? user = FirebaseAuth.instance.currentUser;
 
   Future<DocumentSnapshot> getUserData() async{
     String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -111,6 +113,85 @@ class ProfileScreen extends StatelessWidget{
                                               child: Center(child: CircularProgressIndicator(),),
                                             );
                                           },
+                                        ),      Row(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                post['likes'] != null && post['likes'].contains(user!.uid)
+                                                    ?Icons.favorite
+                                                    : Icons.favorite_border,
+                                                color:post['likes'] != null && post['likes'].contains(user!.uid)
+                                                    ?Colors.red
+                                                    :Colors.grey,
+                                              ),
+                                              onPressed:()async{
+                                                final postRef = FirebaseFirestore.instance
+                                                    .collection("posts")
+                                                    .doc(post.id);
+                                                final likes = List<String>.from(post["likes"]??[]);
+                                                if(likes.contains(user!.uid)){
+                                                  //unlike
+                                                  await postRef.update({
+                                                    "likes":FieldValue.arrayRemove([user!.uid])
+                                                  });
+                                                }
+                                                else{
+                                                  await postRef.update({
+                                                    "likes": FieldValue.arrayUnion([user!.uid])
+                                                  });
+                                                }
+
+                                              },
+
+                                            ),
+                                            Text('${(post['likes'] ?? []).length}'),
+                                            IconButton(onPressed: (){
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                backgroundColor: Colors.transparent,
+                                                builder: (context) => CommentScreen(postId: post.id),
+                                              );
+
+                                            },
+                                                icon: Icon(Icons.comment_outlined)
+                                            ),
+                                            Spacer(),
+                                            // 🗑️ Delete button
+                                            IconButton(
+                                              icon: Icon(Icons.delete, color: Colors.red),
+                                              onPressed: () async {
+                                                final confirm = await showDialog(
+                                                  context: context,
+                                                  builder: (context) => AlertDialog(
+                                                    title: Text("Delete Post"),
+                                                    content: Text("Are you sure you want to delete this post?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(context, false),
+                                                        child: Text("Cancel"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(context, true),
+                                                        child: Text("Delete", style: TextStyle(color: Colors.red)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+
+                                                if (confirm == true) {
+                                                  // Delete from Firestore
+                                                  await FirebaseFirestore.instance.collection("posts").doc(post.id).delete();
+
+                                                  // Delete from Cloudinary (optional)
+                                                 /* if (post['publicId'] != null && post['publicId'].toString().isNotEmpty) {
+                                                    await deleteFromCloudinary(post['publicId']);
+                                                  }*/
+
+                                                  UiHelper.showAlertDialog(context, "Deleted", "Post has been deleted.");
+                                                }
+                                              },)
+                                          ],
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
